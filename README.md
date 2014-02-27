@@ -1,4 +1,3 @@
-wp-open311
-==========
+# WordPress Open311
 
-Wordpress Plugin to interact with Open311 API
+A WordPress plugin for interacting with an [Open311](http://open311.org) service. This plugin is based on [WordPress Plugin Boilerplate](https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate).
