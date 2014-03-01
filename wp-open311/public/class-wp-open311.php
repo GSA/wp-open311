@@ -57,6 +57,9 @@ class wp_open311 {
 	 */
 	protected static $instance = null;
 
+	var $options;
+	var $response;
+
 	/**
 	 * Initialize the plugin by setting localization and loading public scripts
 	 * and styles.
@@ -64,6 +67,12 @@ class wp_open311 {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
+
+		$this->options 	= get_option( 'open311_options' );
+		$this->response = null;
+
+		// Look for any submitted forms to process
+		add_action('init', array($this, 'receive_form'));
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -82,6 +91,8 @@ class wp_open311 {
 		// add_filter( '@TODO', array( $this, 'filter_method_name' ) );
 
 		add_shortcode('open311_requests', array($this, 'requests_shortcode'));
+		add_shortcode('open311_service', array($this, 'service_shortcode'));
+
 
 	}
 
@@ -97,17 +108,35 @@ class wp_open311 {
 		return $this->requests_search($atts['filter']);
 	}
 
+	public function service_shortcode($atts) {
+		
+		if ($this->response && $this->response['success'] === true) {
+			return $this->display_response($this->response);
+		} else {
+			return $this->assemble_service($atts['id']);
+		}
+		
+	}
+
 
 	public function requests_search($filter = '') {
-		require_once( plugin_dir_path( __FILE__ ) . '../public/class-wp-open311-api.php' );
 
-		$options = get_option( 'open311_options' );
-		$open311_api = new open311_api($options);
-		
+		$open311_api = $this->get_api();
+
 		$requests = $open311_api->get_requests($filter);
 		return $this->display_requests_search($requests);
 
 	}
+
+	public function assemble_service($id) {
+
+		$open311_api = $this->get_api();
+
+		$service = $open311_api->get_service($id);
+		return $this->display_service($service);
+
+	}
+
 
 	/**
 	 * Render the output from the shortcode
@@ -120,6 +149,88 @@ class wp_open311 {
 
 
 
+	/**
+	 * Render the output from the shortcode
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_service($service) {
+		include_once( 'views/service.php' );
+	}
+
+
+	public function receive_form() {
+		if (isset($_POST['wp_open311_service_code'])) {
+
+			$service_code 	= $_POST['wp_open311_service_code'];
+			$open311_api 	= $this->get_api();
+			
+			if ($service = $open311_api->get_service($service_code)) {
+
+				
+
+				// filter for fields that are defined in service
+				if($fields = $service['definitions']->attributes) {
+					
+					$filtered_fields = array();
+					$required_fields = array();
+
+					foreach ( $fields as $field) {
+						$key = $field->code;
+
+						if ($field->required = "true") {
+							$required_fields[$key] = true;
+						}
+
+						if (isset($_POST[$key])) {
+							$filtered_fields[$key] = $_POST[$key];
+						}
+					}
+
+					$response = array();
+
+					// check for missing required fields 
+					$missing = array_diff_key($required_fields, $filtered_fields);
+					if (!empty($missing)) {
+						// return error
+						$response['success'] 			= false;
+						$response['message'] 			= $missing;
+					
+					} else {
+						$api_response = $open311_api->post_request($service_code, $filtered_fields);
+
+						// if api response was good:
+						$response['success'] = true;
+						$response['message'] = $api_response;
+
+					}
+
+					$this->response = $response;
+
+				}
+
+			}
+	
+		}		
+	}
+
+
+	/**
+	 * Render the output from the shortcode
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_response($response) {
+		include_once( 'views/response.php' );
+	}	
+
+
+	public function get_api() {
+		require_once( plugin_dir_path( __FILE__ ) . '../public/class-wp-open311-api.php' );
+	
+		$open311_api = new open311_api($this->options);	
+		return $open311_api;
+	}
 
 	/**
 	 * Return the plugin slug.
