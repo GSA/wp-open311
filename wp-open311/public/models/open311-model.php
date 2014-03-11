@@ -56,7 +56,7 @@ class open311_model {
 
 			$standard_field->variable 		= "true";			
 			$standard_field->code 			= $field;
-			$standard_field->datatype 		= "text";
+			$standard_field->datatype 		= "string";
 			$standard_field->required 		= $required;
 			$standard_field->order 			= $order;			
 			$standard_field->description 	= $description;

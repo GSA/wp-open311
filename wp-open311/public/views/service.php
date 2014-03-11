@@ -49,7 +49,24 @@
 		$required 	= (strtolower($attribute->required) == 'true') ? 'Required' : 'Optional';
 		$required_label = '<span class="open311-requirement-label">(' . $required . ')</span>';
 		$label 		= '<label for="' . $attribute->code . '">' . $attribute->description . ' ' . $required_label . '</label>';
-		$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" placeholder="' . $attribute->datatype_description . '">';
+
+		if($attribute->datatype == 'string') {
+			$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" placeholder="' . $attribute->datatype_description . '">';	
+		} else if ($attribute->datatype == 'text') {
+			$field_type = '<textarea class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '"></textarea>';	
+		} else if ($attribute->datatype == 'singlevaluelist') {
+			$field_type = '<select class="form-control chosen-select" name="' . $attribute->code . '" id="' . $attribute->code . '" data-placeholder="Select ' . $attribute->description . '">';
+		
+			$options = json_decode($attribute->values);
+
+			foreach ($options as $option) {
+				$field_type .= '<option value="' . $option->key . '">' . $option->name . '</option>';
+			}
+
+			$field_type .= '</select>';
+
+		}
+		
 
 		$field .= '<div class="form-group ' . strtolower($required) . '">';
 		$field .= $label;

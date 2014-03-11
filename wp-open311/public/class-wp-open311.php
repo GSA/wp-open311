@@ -9,6 +9,17 @@
  * @copyright 2014 Philip Ashlock
  */
 
+
+if (!defined('WP_PLUGIN_DIR'))
+	define('WP_PLUGIN_DIR','/');
+
+if (!defined('WPOPEN311_PLUGIN_NAME'))
+    define('WPOPEN311_PLUGIN_NAME', 'wp-open311');
+
+if (!defined('WPOPEN311_PLUGIN_URL'))
+    define('WPOPEN311_PLUGIN_URL', WP_PLUGIN_URL . '/' . WPOPEN311_PLUGIN_NAME . '/');
+
+
 /**
  * Plugin class. This class should ideally be used to work with the
  * public-facing side of the WordPress site.
@@ -46,7 +57,7 @@ class wp_open311 {
 	 *
 	 * @var      string
 	 */
-	protected $plugin_slug = 'wp-open311';
+	protected $plugin_slug = WPOPEN311_PLUGIN_NAME;
 
 	/**
 	 * Instance of this class.
@@ -492,7 +503,7 @@ class wp_open311 {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'assets/css/public.css', __FILE__ ), array(), self::VERSION );
+		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', WPOPEN311_PLUGIN_URL . 'public/assets/css/chosen.min.css', array(), self::VERSION );
 	}
 
 	/**
@@ -501,7 +512,8 @@ class wp_open311 {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'assets/js/public.js', __FILE__ ), array( 'jquery' ), self::VERSION );
+		wp_enqueue_script( $this->plugin_slug . '-plugin-script', WPOPEN311_PLUGIN_URL . 'public/assets/js/chosen.jquery.min.js', array( 'jquery' ), self::VERSION );
+		wp_enqueue_script( $this->plugin_slug . '-plugin-script-2', WPOPEN311_PLUGIN_URL . 'public/assets/js/public.js', array( 'jquery' ), self::VERSION );
 	}
 
 	/**
