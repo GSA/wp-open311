@@ -55,8 +55,6 @@ class open311_api {
 		$parameters = array();
 		$parameters['api_key'] 					= $this->options['api_key'];		
 		$parameters['service_code']				= $service_code;
-		$parameters['description']				= 'hello world';
-		$parameters['attribute[external_id]'] 	= '123456213adf';
 
 		foreach($attributes as $key => $value) {
 			$name = "attribute[$key]";

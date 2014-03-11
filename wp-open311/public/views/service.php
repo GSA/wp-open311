@@ -18,17 +18,20 @@
 
 <form action="" method="post" role="form">
 
-<h2>
-	<?php echo $service['meta']->service_name; ?>
-</h2>
-
+<fieldset class="open311-service">
+	<legend><?php echo $service['meta']->service_name; ?></legend>
 <?php foreach ($service['definitions']->attributes as $attribute) { ?>
-	<div class="form-group">
-
-		<?php echo generate_html_field($attribute) ?>
-
-	</div>
+	<?php echo generate_html_field($attribute) ?>
 <?php } ?>
+</fieldset>
+
+<fieldset class="open311-core">
+	<legend>Information about your Request</legend>
+	<?php foreach ($standard_fields['definitions']->attributes as $standard_field) { ?>
+		<?php echo generate_html_field($standard_field) ?>
+	<?php } ?>
+</fieldset>
+
 
 <input type="hidden" name="wp_open311_service_code" value="<?php echo $service['meta']->service_code; ?>">
 <button type="submit" class="btn btn-default">Submit</button>
@@ -43,12 +46,15 @@
 
 	function generate_html_field($attribute) {
 
-		$label 		= '<label for="' . $attribute->code . '">' . $attribute->description . '</label>';
+		$required 	= (strtolower($attribute->required) == 'true') ? 'Required' : 'Optional';
+		$required_label = '<span class="open311-requirement-label">(' . $required . ')</span>';
+		$label 		= '<label for="' . $attribute->code . '">' . $attribute->description . ' ' . $required_label . '</label>';
 		$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" placeholder="' . $attribute->datatype_description . '">';
 
-		
+		$field .= '<div class="form-group ' . strtolower($required) . '">';
 		$field .= $label;
 		$field .= $field_type;
+		$field .= '</div>';
 		
 
 		return $field;

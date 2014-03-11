@@ -131,9 +131,73 @@ class wp_open311 {
 	public function assemble_service($id) {
 
 		$open311_api = $this->get_api();
+		$open311_model = $this->get_model();
+
+		$standard_fields = $open311_model->standard_fields();
+
+		// check for standard field definitions via a site-wide override (service_code 0 convention)
+		if ($standard_field_override = $open311_api->get_service('0')) {
+			if(!empty($standard_field_override['definitions'])) {
+				$standard_fields = $this->service_override_merge($standard_fields, $standard_field_override, $unset_match = false)->standard_fields;
+			}
+		} 
 
 		$service = $open311_api->get_service($id);
-		return $this->display_service($service);
+
+		// check for standard field definitions via service-specific override
+		if(!empty($service['definitions'])) {
+			$merge = $this->service_override_merge($standard_fields, $service, $unset_match = true);
+			
+			$service 			= $merge->service_fields;
+			$standard_fields 	= $merge->standard_fields;
+		}
+
+
+		$standard_fields_attributes = new stdClass();
+		$standard_fields_attributes->attributes = $standard_fields;
+		$standard_fields_as_service = array('definitions' => $standard_fields_attributes);
+
+		return $this->display_service($standard_fields_as_service, $service);
+
+	}
+
+
+
+
+	public function service_override_merge($standard_fields, $service_fields, $unset_match = false) {
+
+		$override_merge = new stdClass();
+		$matches 		= array();
+		$output 		= new stdClass();
+
+		foreach($standard_fields as $match_key => $definition) {
+
+			foreach($service_fields['definitions']->attributes as $key => $override) {
+
+				if ($override->code == $match_key) {
+					
+					$matches[$match_key] = true;
+
+
+					if($unset_match) {
+						//unset($service_fields['definitions']->attributes[$key]);
+					} else {
+						$override_merge->$match_key = $override;
+					}
+				}
+			}
+			reset($service_fields['definitions']->attributes);
+
+			if (empty($matches[$match_key])) {
+				$override_merge->$match_key = $definition;
+			}	
+			
+		}
+
+		$output->service_fields  = $service_fields;
+		$output->standard_fields = $override_merge;
+
+		return $output;
 
 	}
 
@@ -154,7 +218,7 @@ class wp_open311 {
 	 *
 	 * @since    1.0.0
 	 */
-	public function display_service($service) {
+	public function display_service($standard_fields, $service) {
 		include_once( 'views/service.php' );
 	}
 
@@ -231,6 +295,18 @@ class wp_open311 {
 		$open311_api = new open311_api($this->options);	
 		return $open311_api;
 	}
+
+
+	public function get_model() {
+		require_once( plugin_dir_path( __FILE__ ) . '../public/models/open311-model.php' );
+	
+		$open311_model = new open311_model();	
+		return $open311_model;
+	}
+
+
+	
+
 
 	/**
 	 * Return the plugin slug.
