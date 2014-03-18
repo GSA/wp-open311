@@ -5,7 +5,7 @@
  * @package   WP-Open311
  * @author    Philip Ashlock
  * @license   GPL-2.0+
- * @link      http://civicagnecy.org
+ * @link      http://civicagency.org
  * @copyright 2014 Philip Ashlock
  */
 
