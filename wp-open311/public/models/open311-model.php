@@ -67,7 +67,13 @@ class open311_model {
 			$standard_fields->$field = $standard_field;
 		}
 
-		return $standard_fields;
+		$standard_service = new stdClass();
+		$standard_service->attributes = $standard_fields;
+
+		$standard_fields_as_service = new stdClass();
+		$standard_fields_as_service->definitions =  $standard_service;
+
+		return $standard_fields_as_service;
 
 	}
 

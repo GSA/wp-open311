@@ -39,7 +39,10 @@ class open311_api {
 			}
 		}
 
-		$complete_service = array('meta' => $service_meta, 'definitions' => $service_definition);
+		$complete_service = new stdClass();
+		
+		$complete_service->meta = $service_meta;
+		$complete_service->definitions = $service_definition;
 
 				
 		return $complete_service;

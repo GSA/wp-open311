@@ -143,11 +143,7 @@ class wp_open311 {
 
 		$fields = $this->consolidate_fields($id);
 
-		$standard_fields_attributes = new stdClass();
-		$standard_fields_attributes->attributes = $fields->standard_fields;
-		$standard_fields_as_service = array('definitions' => $standard_fields_attributes);
-
-		return $this->display_service($standard_fields_as_service, $fields->service_fields);
+		return $this->display_service($fields->standard_fields, $fields->service_fields);
 
 	}
 
@@ -161,7 +157,7 @@ class wp_open311 {
 
 		// check for standard field definitions via a site-wide override (service_code 0 convention)
 		if ($standard_field_override = $open311_api->get_service('0')) {
-			if(!empty($standard_field_override['definitions'])) {
+			if(!empty($standard_field_override->definitions)) {
 				$fields->standard_fields = $this->service_override_merge($fields->standard_fields, $standard_field_override, $unset_match = false)->standard_fields;
 			}
 		} 
@@ -171,13 +167,52 @@ class wp_open311 {
 		}
 		
 		// check for standard field definitions via service-specific override
-		if(($service['meta']->metadata == 'true') && !empty($service['definitions']->attributes)) {
+		if(($service->meta->metadata == 'true') && !empty($service->definitions->attributes)) {
 			$fields = $this->service_override_merge($fields->standard_fields, $service, $unset_match = true);			
 		} else {
 			$fields->service_fields = $service;
 		}
 
+		// namespace standard fields
+		$fields->standard_fields->definitions->attributes = $this->namespace_fields($fields->standard_fields->definitions->attributes);
+
+		// namespace service fields
+		if (!empty($fields->service_fields->definitions->attributes)) {
+			$fields->service_fields->definitions->attributes = $this->namespace_fields($fields->service_fields->definitions->attributes);
+		}
+
 		return $fields;
+
+	}
+
+	public function namespace_fields($attributes) {
+
+		$namespace_fields = array();
+		foreach ($attributes as $namespace_field) {
+			$namespace_field->code = 'wp_open311_' . $namespace_field->code;
+			$namespace_fields[] = $namespace_field;
+		}
+		
+		return $namespace_fields;
+	}
+
+	public function un_namespace_fields($fields) {
+
+		$namespace = 'wp_open311_';
+		$no_namespace = array();
+
+		foreach ($fields as $key => $field) {
+
+			if (substr($key, 0, strlen($namespace)) == $namespace) {
+				$new_key = substr($key, strlen($namespace));
+			}
+
+			$no_namespace[$new_key] = $field;
+
+			
+		}
+
+		return $no_namespace;
 
 	}
 
@@ -188,9 +223,9 @@ class wp_open311 {
 		$output 		= new stdClass();
 		$matches 		= array();
 
-		foreach($standard_fields as $match_key => $definition) {
+		foreach($standard_fields->definitions->attributes as $match_key => $definition) {
 
-			foreach($service_fields['definitions']->attributes as $key => $override) {
+			foreach($service_fields->definitions->attributes as $key => $override) {
 
 				if ($override->code == $match_key) {
 					
@@ -198,13 +233,13 @@ class wp_open311 {
 
 
 					if($unset_match) {
-						//unset($service_fields['definitions']->attributes[$key]);
+						//unset($service_fields->definitions->attributes[$key]);
 					} else {
 						$override_merge->$match_key = $override;
 					}
 				}
 			}
-			reset($service_fields['definitions']->attributes);
+			reset($service_fields->definitions->attributes);
 
 			if (empty($matches[$match_key])) {
 				$override_merge->$match_key = $definition;
@@ -212,8 +247,10 @@ class wp_open311 {
 			
 		}
 
+		$standard_fields->definitions->attributes = $override_merge;
+
 		$output->service_fields  = $service_fields;
-		$output->standard_fields = $override_merge;
+		$output->standard_fields = $standard_fields;
 
 		return $output;
 
@@ -253,7 +290,7 @@ class wp_open311 {
 			$combined_fields = $fields->standard_fields;
 
 			if($fields->service_fields) {
-				$combined_fields = (object) array_merge((array) $combined_fields, (array) $fields->service_fields['definitions']->attributes);
+				$combined_fields = (object) array_merge((array) $combined_fields, (array) $fields->service_fields->definitions->attributes);
 			}
 
 			// filter for fields that are defined in service
@@ -285,6 +322,9 @@ class wp_open311 {
 				$response['message'] 			= $missing;
 			
 			} else {
+
+				$filtered_fields = $this->un_namespace_fields($filtered_fields);
+
 				$api_response = $open311_api->post_request($service_code, $filtered_fields);
 
 				// if api response was good:
