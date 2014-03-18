@@ -20,9 +20,15 @@
 
 <fieldset class="open311-service">
 	<legend><?php echo $service['meta']->service_name; ?></legend>
-<?php foreach ($service['definitions']->attributes as $attribute) { ?>
-	<?php echo generate_html_field($attribute) ?>
-<?php } ?>
+	
+	<?php if(!empty($service['definitions']->attributes)): ?> 
+
+		<?php foreach ($service['definitions']->attributes as $attribute) { ?>
+			<?php echo generate_html_field($attribute) ?>
+		<?php } ?>
+		
+	<?php endif; ?>		
+	
 </fieldset>
 
 <fieldset class="open311-core">
@@ -34,7 +40,7 @@
 
 
 <input type="hidden" name="wp_open311_service_code" value="<?php echo $service['meta']->service_code; ?>">
-<button type="submit" class="btn btn-default">Submit</button>
+<button type="submit" class="btn btn-primary">Submit</button>
 
 
 </form>
@@ -57,7 +63,9 @@
 		} else if ($attribute->datatype == 'singlevaluelist') {
 			$field_type = '<select class="form-control chosen-select" name="' . $attribute->code . '" id="' . $attribute->code . '" data-placeholder="Select ' . $attribute->description . '">';
 		
-			$options = json_decode($attribute->values);
+			$options = $attribute->values;
+
+			$field_type .= '<option value="" disabled selected></option>';
 
 			foreach ($options as $option) {
 				$field_type .= '<option value="' . $option->key . '">' . $option->name . '</option>';
