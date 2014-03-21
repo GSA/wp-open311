@@ -147,7 +147,7 @@ class wp_open311 {
 
 	}
 
-	public function consolidate_fields($id = null) {
+	public function consolidate_fields($id = null, $service_merge = true) {
 
 		$open311_api 	= $this->get_api();
 		$open311_model 	= $this->get_model();
@@ -167,7 +167,7 @@ class wp_open311 {
 		}
 		
 		// check for standard field definitions via service-specific override
-		if(($service->meta->metadata == 'true') && !empty($service->definitions->attributes)) {
+		if($service_merge && ($service->meta->metadata == 'true') && !empty($service->definitions->attributes)) {
 			$fields = $this->service_override_merge($fields->standard_fields, $service, $unset_match = true);			
 		} else {
 			$fields->service_fields = $service;
@@ -285,9 +285,9 @@ class wp_open311 {
 			$open311_api 	= $this->get_api();
 			$service_code 	= $_POST['wp_open311_service_code'];
 			
-			$fields = $this->consolidate_fields($service_code);
+			$fields = $this->consolidate_fields($service_code, $service_merge = false);
 
-			$combined_fields = $fields->standard_fields;
+			$combined_fields = $fields->standard_fields->definitions->attributes;
 
 			if($fields->service_fields) {
 				$combined_fields = (object) array_merge((array) $combined_fields, (array) $fields->service_fields->definitions->attributes);
@@ -311,7 +311,6 @@ class wp_open311 {
 
 			$response = array();
 
-
 			// check for missing required fields 
 			$missing = array_diff_key($required_fields, $filtered_fields);
 
@@ -323,9 +322,23 @@ class wp_open311 {
 			
 			} else {
 
-				$filtered_fields = $this->un_namespace_fields($filtered_fields);
+				// Separate standard fields from service 
+				$standard_fields_filtered = array();
 
-				$api_response = $open311_api->post_request($service_code, $filtered_fields);
+				foreach ($fields->standard_fields->definitions->attributes as $standard_field) {
+					
+					if(isset($filtered_fields[$standard_field->code])) {
+						$standard_fields_filtered[$standard_field->code] = $filtered_fields[$standard_field->code];
+						unset($filtered_fields[$standard_field->code]);
+					}
+					
+				}
+
+				$filtered_fields 			= $this->un_namespace_fields($filtered_fields);
+				$standard_fields_filtered	= $this->un_namespace_fields($standard_fields_filtered);
+
+
+				$api_response = $open311_api->post_request($service_code, $standard_fields_filtered, $filtered_fields);
 
 				// if api response was good:
 				$response['success'] = true;

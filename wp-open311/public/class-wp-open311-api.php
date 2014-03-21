@@ -49,13 +49,13 @@ class open311_api {
 	}
 
 
-	public function post_request($service_code, $attributes) {
+	public function post_request($service_code, $standard_fields, $attributes) {
 
 		$url = $this->options['api_uri'] . 'requests.json'; 
 
 		
 
-		$parameters = array();
+		$parameters = $standard_fields;
 		$parameters['api_key'] 					= $this->options['api_key'];		
 		$parameters['service_code']				= $service_code;
 
