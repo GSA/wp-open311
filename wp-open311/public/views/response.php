@@ -16,5 +16,16 @@
 <!-- This file is used to markup the public facing aspect of the plugin. -->
 
 
-		<?php var_dump($response); ?>
+
+<?php if($response['success']) echo "Success" ?>
+
+
+<?php foreach ($response['message'] as $message): ?>
+
+	<div>
+		Ticket <?php echo $message->service_request_id; ?> created
+	</div>
+
+<?php endforeach; ?>
+
 

@@ -12,9 +12,9 @@
  * @copyright 2014 Philip Ashlock
  *
  * @wordpress-plugin
- * Plugin Name:       WP Open311
+ * Plugin Name:       Open311 Web App
  * Plugin URI:        http://open311.org
- * Description:       A WordPress plugin for interacting with an Open311 service.
+ * Description:       A WordPress plugin that acts as a web app for interacting with an Open311 service
  * Version:           1.0.0
  * Author:            Philip Ashlock
  * Author URI:        http://civicagency.org

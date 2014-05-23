@@ -15,6 +15,13 @@
 
 <!-- This file is used to markup the public facing aspect of the plugin. -->
 
+<?php 
+
+global $wp_query;
+//var_dump($wp_query->query_vars['request_id']);
+
+?>
+
 <?php foreach ($requests as $request) { ?>
 	<div>
 
