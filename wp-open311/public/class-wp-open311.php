@@ -104,6 +104,12 @@ class wp_open311 {
 		add_shortcode('open311_service', array($this, 'service_shortcode'));
 
 
+		add_filter('query_vars', array($this, 'open311_queryvars') );
+
+		// hook add_rewrite_rules function into rewrite_rules_array
+		add_filter('rewrite_rules_array', array($this, 'open311_rewrite_rules') );
+
+
 	}
 
 
@@ -114,9 +120,29 @@ class wp_open311 {
 		//	'page_size' => 50,
 		//	'page' => 1,
 		//), $atts));
-		
-		return $this->requests_search($atts['filter']);
+
+		$filter = (!empty($atts['filter'])) ? $atts['filter'] : '';
+
+		return $this->requests_search($filter);
 	}
+
+
+function open311_rewrite_rules($aRules) {
+
+
+	//global $wp_query;
+	//$page_name = $wp_query->query_vars["pagename"]; //     /([^/]+)    /   $matches[1]
+
+	//$page_name = 'view-open311';
+
+	$aNewRules = array('([^/]+)/request-id/([^/]+)/?$' => 'index.php?pagename=$matches[1]&request_id=$matches[2]');
+	$aRules = $aNewRules + $aRules;
+
+	return $aRules;
+}
+
+
+
 
 	public function service_shortcode($atts) {
 		
@@ -377,6 +403,15 @@ class wp_open311 {
 		return $open311_model;
 	}
 
+
+
+
+
+
+	public function open311_queryvars($qvars) {
+		$qvars[] = 'request_id';
+		return $qvars;
+	}
 
 	
 
