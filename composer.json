@@ -1,0 +1,7 @@
+{
+    "name": "gsa/wp-open311", 
+    "require": {
+        "composer/installers": "~1.0"
+    }, 
+    "type": "wordpress-plugin"
+}
