@@ -11,21 +11,16 @@
  * @link      http://example.com
  * @copyright 2014 Your Name or Company Name
  */
+
+
+function requests_output($requests) {
+	ob_start();
+
+	foreach ($requests as $request) { 	
+		echo '<div>' . $request->description . '</div>';
+	} 
+
+	return ob_get_clean();
+}
+
 ?>
-
-<!-- This file is used to markup the public facing aspect of the plugin. -->
-
-<?php 
-
-global $wp_query;
-//var_dump($wp_query->query_vars['request_id']);
-
-?>
-
-<?php foreach ($requests as $request) { ?>
-	<div>
-
-		<?php echo $request->description; ?>
-
-	</div>
-<?php } ?>

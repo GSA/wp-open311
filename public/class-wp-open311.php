@@ -290,6 +290,8 @@ function open311_rewrite_rules($aRules) {
 	 */
 	public function display_requests_search($requests) {
 		include_once( 'views/requests.php' );
+
+		return requests_output($requests);
 	}
 
 
@@ -301,6 +303,8 @@ function open311_rewrite_rules($aRules) {
 	 */
 	public function display_service($standard_fields, $service) {
 		include_once( 'views/service.php' );
+
+		return service_output($standard_fields, $service);
 	}
 
 
@@ -385,6 +389,8 @@ function open311_rewrite_rules($aRules) {
 	 */
 	public function display_response($response) {
 		include_once( 'views/response.php' );
+
+		return response_output($response);
 	}	
 
 

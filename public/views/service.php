@@ -11,42 +11,49 @@
  * @link      http://example.com
  * @copyright 2014 Your Name or Company Name
  */
+
+
+
+
+function service_output($standard_fields, $service) {
+	ob_start();
 ?>
 
+	<form action="" method="post" role="form">
 
-<!-- This file is used to markup the public facing aspect of the plugin. -->
+	<fieldset class="open311-service">
+		<legend><?php echo $service->meta->service_name; ?></legend>
+		
+		<?php if(!empty($service->definitions->attributes)): ?> 
 
-<form action="" method="post" role="form">
+			<?php foreach ($service->definitions->attributes as $attribute) { ?>
+				<?php echo generate_html_field($attribute) ?>
+			<?php } ?>
 
-<fieldset class="open311-service">
-	<legend><?php echo $service->meta->service_name; ?></legend>
-	
-	<?php if(!empty($service->definitions->attributes)): ?> 
+		<?php endif; ?>		
+		
+	</fieldset>
 
-		<?php foreach ($service->definitions->attributes as $attribute) { ?>
-			<?php echo generate_html_field($attribute) ?>
+	<fieldset class="open311-core">
+		<legend>Information about your Request</legend>
+		<?php foreach ($standard_fields->definitions->attributes as $standard_field) { ?>
+			<?php echo generate_html_field($standard_field) ?>
 		<?php } ?>
-
-	<?php endif; ?>		
-	
-</fieldset>
-
-<fieldset class="open311-core">
-	<legend>Information about your Request</legend>
-	<?php foreach ($standard_fields->definitions->attributes as $standard_field) { ?>
-		<?php echo generate_html_field($standard_field) ?>
-	<?php } ?>
-</fieldset>
+	</fieldset>
 
 
-<input type="hidden" name="wp_open311_service_code" value="<?php echo $service->meta->service_code; ?>">
-<button type="submit" class="btn btn-primary">Submit</button>
+	<input type="hidden" name="wp_open311_service_code" value="<?php echo $service->meta->service_code; ?>">
+	<button type="submit" class="btn btn-primary">Submit</button>
 
 
-</form>
+	</form>
 
 
 <?php
+	return ob_get_clean();
+}
+
+
 
 /************** Functions **************/
 

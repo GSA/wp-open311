@@ -11,21 +11,19 @@
  * @link      http://example.com
  * @copyright 2014 Your Name or Company Name
  */
+
+
+function response_output($response) {
+	ob_start();
+
+	if($response['success']) echo "Success";
+
+	foreach ($response['message'] as $message) {
+		echo '<div>Ticket ' . $message->service_request_id . ' created</div>';
+	}
+
+	return ob_get_clean();
+}
+
 ?>
-
-<!-- This file is used to markup the public facing aspect of the plugin. -->
-
-
-
-<?php if($response['success']) echo "Success" ?>
-
-
-<?php foreach ($response['message'] as $message): ?>
-
-	<div>
-		Ticket <?php echo $message->service_request_id; ?> created
-	</div>
-
-<?php endforeach; ?>
-
 
