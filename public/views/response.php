@@ -16,10 +16,10 @@
 function response_output($response) {
 	ob_start();
 
-	if($response['success']) echo "Success";
+	if($response['success']) echo "Thanks for your request. ";
 
 	foreach ($response['message'] as $message) {
-		echo '<div>Ticket ' . $message->service_request_id . ' created</div>';
+		echo ' <span>The status of the response can be tracked under request #' . $message->service_request_id . '</span>';
 	}
 
 	return ob_get_clean();
