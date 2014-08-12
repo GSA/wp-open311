@@ -607,6 +607,8 @@ function open311_rewrite_rules($aRules) {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', WPOPEN311_PLUGIN_URL . 'public/assets/css/chosen.min.css', array(), self::VERSION );
+		wp_enqueue_style( $this->plugin_slug . '-plugin-styles-2', WPOPEN311_PLUGIN_URL . 'public/assets/css/public.css', array(), self::VERSION );
+
 	}
 
 	/**

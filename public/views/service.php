@@ -19,7 +19,7 @@ function service_output($standard_fields, $service) {
 	ob_start();
 ?>
 
-	<form action="" method="post" role="form">
+	<form class="open311-form" action="" method="post" role="form">
 
 	<fieldset class="open311-service">
 		<legend><?php echo $service->meta->service_name; ?></legend>

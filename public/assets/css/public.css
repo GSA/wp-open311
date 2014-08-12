@@ -1,1 +1,10 @@
 /* This stylesheet is used to style the public-facing components of the plugin. */
+
+
+.open311-form fieldset + fieldset {
+	margin-top : 2em;
+}
+
+.open311-form {
+	margin-bottom : 2em;
+}
