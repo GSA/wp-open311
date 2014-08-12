@@ -291,6 +291,8 @@ function open311_rewrite_rules($aRules) {
 	public function display_requests_search($requests) {
 		include_once( 'views/requests.php' );
 
+		$requests = $this->array_orderby($requests,'service_request_id', SORT_DESC);
+
 		return requests_output($requests);
 	}
 
@@ -646,5 +648,28 @@ function open311_rewrite_rules($aRules) {
 	public function filter_method_name() {
 		// @TODO: Define your filter hook callback here
 	}
+
+	public function array_orderby() {		
+	    $args = func_get_args();
+	    $data = array_shift($args);
+
+	    foreach ($data as $key => $row) {
+	    	$data[$key] = (array) $row;
+	    }
+
+	    foreach ($args as $n => $field) {
+	        if (is_string($field)) {
+	            $tmp = array();
+	            foreach ($data as $key => $row)
+	                $tmp[$key] = $row[$field];
+	            $args[$n] = $tmp;
+	            }
+	    }
+	    $args[] = &$data;
+	    call_user_func_array('array_multisort', $args);
+	    return array_pop($args);
+	}
+
+
 
 }

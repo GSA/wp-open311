@@ -17,6 +17,9 @@ function requests_output($requests) {
 	ob_start();
 
 	foreach ($requests as $request) { 	
+
+		$request = (object) $request;
+
 		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
 		echo '<div class="open311-id"> Request #' . $request->service_request_id . '</div>';
 		echo '<div class="open311-status">';
