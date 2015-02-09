@@ -12,7 +12,11 @@ class open311_api {
 	
 	public function get_requests($filter = null, $page_size = null, $page = null) {
 
-		$url = $this->options['api_uri'] . 'requests.json'; // '?page_size=' . $page_size;
+		if (empty($filter['request_id'])) {
+			$url = $this->options['api_uri'] . 'requests.json'; // '?page_size=' . $page_size;	
+		} else {
+			$url = $this->options['api_uri'] . 'requests/' . $filter['request_id'] . '.json'; 
+		}
 
 		$json = wp_remote_get($url);
 		
@@ -53,8 +57,7 @@ class open311_api {
 
 		$url = $this->options['api_uri'] . 'requests.json'; 
 
-		
-
+	
 		$parameters = $standard_fields;
 		$parameters['api_key'] 					= $this->options['api_key'];		
 		$parameters['service_code']				= $service_code;

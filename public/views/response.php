@@ -18,8 +18,12 @@ function response_output($response) {
 
 	if($response['success']) echo "Thanks for your request. ";
 
-	foreach ($response['message'] as $message) {
-		echo ' <span>The status of the response can be tracked under request #' . $message->service_request_id . '</span>';
+	if(!empty($response['message']) && is_array($response['message'])) {
+
+		foreach ($response['message'] as $message) {
+			echo ' <span>The status of the response can be tracked under request ' .  '<a href="./request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
+		}
+
 	}
 
 	return ob_get_clean();
