@@ -16,15 +16,38 @@
 function response_output($response) {
 	ob_start();
 
-	if($response['success']) echo "Thanks for your request. ";
 
-	if(!empty($response['message']) && is_array($response['message'])) {
+    if($response['success']) {
 
-		foreach ($response['message'] as $message) {
-			echo ' <span>The status of the response can be tracked under request ' .  '<a href="./request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
-		}
+        echo "Thanks for your request. ";
+        
+        if(!empty($response['message']) && is_array($response['message'])) {
 
-	}
+            foreach ($response['message'] as $message) {
+                echo ' <span>The status of the response can be tracked under request ' .  '<a href="./request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
+            }
+
+        }        
+
+    }
+
+
+    if(!$response['success']) {
+
+        echo "There was an error with your request. ";
+        
+        if(!empty($response['message']) && is_array($response['message'])) {
+
+            foreach ($response['message'] as $message) {
+                echo ' <span>' . $message . '</span>';
+            }
+
+        }        
+
+    }
+
+
+
 
 	return ob_get_clean();
 }

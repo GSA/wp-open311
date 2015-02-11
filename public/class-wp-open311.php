@@ -143,12 +143,16 @@ class wp_open311 {
 		global $wp_query;
 
 		if (!empty($wp_query->query) && !empty($wp_query->query['request_id'])) {
+
 			return $this->requests_search(array('request_id' => $wp_query->query['request_id']));
 		}
 
 
 		if (!empty($this->response) && $this->response['success'] === true) {
 			return $this->display_response($this->response);
+		}
+		else if (!empty($this->response) && $this->response['success'] !== true) {
+			return $this->display_response($this->response);			
 		} else {
 			return $this->assemble_service($atts['id']);
 		}
@@ -297,9 +301,18 @@ class wp_open311 {
 	public function display_requests_search($requests) {
 		include_once( 'views/requests.php' );
 
-		$requests = $this->array_orderby($requests,'service_request_id', SORT_DESC);
+		$requests = $this->array_orderby($requests,'service_request_id', SORT_DESC);	
+		
+		if (count($requests) > 1) {
+			return request_list($requests);
+		} else if (count($requests) == 1) {
+			return request_single($requests);
+		} else {
+			return "Search returned no results";
+		}
 
-		return requests_output($requests);
+
+		return requests_list($requests);
 	}
 
 
@@ -342,21 +355,26 @@ class wp_open311 {
 					$required_fields[$key] = true;
 				}
 
-				if (isset($_POST[$key])) {
+				if (isset($_POST[$key]) && !empty($_POST[$key])) {
 					$filtered_fields[$key] = $_POST[$key];
 				}
 			}
 
-			$response = array();
+			$response 	= array();
+			$message 	= array();
 
 			// check for missing required fields 
 			$missing = array_diff_key($required_fields, $filtered_fields);
+			$missing = array_keys($missing); 
 
+			foreach ($missing as $field) {
+				$message[] = 'Missing required field: ' . $field;
+			}
 
 			if (!empty($missing)) {
 				// return error
 				$response['success'] 			= false;
-				$response['message'] 			= $missing;
+				$response['message'] 			= $message;
 			
 			} else {
 
@@ -374,7 +392,6 @@ class wp_open311 {
 
 				$filtered_fields 			= $this->un_namespace_fields($filtered_fields);
 				$standard_fields_filtered	= $this->un_namespace_fields($standard_fields_filtered);
-
 
 				$api_response = $open311_api->post_request($service_code, $standard_fields_filtered, $filtered_fields);
 
