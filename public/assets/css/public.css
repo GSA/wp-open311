@@ -28,6 +28,10 @@
     display: inline-block;
 }
 
+.status-note-heading {
+    font-size : 1.1em !important;
+}
+
 .open311-requested-datetime {
     display: inline-block; 
     margin-left : 2em;
@@ -48,4 +52,13 @@
 
 .open311-description {
     margin-top : 1em;
+}
+
+.open311-request-list .open311-request {
+    border-bottom : 1px solid #ccc;
+    padding-bottom : 2em;
+}
+
+.open311-request-list .open311-request .open311-title a {
+    color : #000;
 }
