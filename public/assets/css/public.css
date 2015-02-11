@@ -17,3 +17,17 @@
 .open311-id {
 	font-weight : bold;
 }
+
+
+.open311-status {
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-weight: bold;
+    color : #fff;
+    display: inline-block;
+}
+
+.state-new, 
+.state-open {
+    background-color: #6cc644;
+}
