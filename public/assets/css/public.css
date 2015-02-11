@@ -16,6 +16,7 @@
 
 .open311-id {
 	font-weight : bold;
+    color : #666;
 }
 
 
@@ -27,7 +28,24 @@
     display: inline-block;
 }
 
-.state-new, 
+.open311-requested-datetime {
+    display: inline-block; 
+    margin-left : 2em;
+    color : #666;  
+}
+
 .state-open {
     background-color: #6cc644;
+}
+
+.state-new {
+    background-color: #f0ad4e;
+}
+
+.state-closed {
+    background-color: #d9534f;
+}
+
+.open311-description {
+    margin-top : 1em;
 }

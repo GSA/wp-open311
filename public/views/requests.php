@@ -46,7 +46,6 @@ function request_single($requests) {
 		// Parse out title from description
 		// check to see if there's a line break in the first 50 characters
 		// otherwise break out first 50 characters 
-
 		if(!empty($request->description)) {
 			if(strpos(substr($request->description, 0, 51), PHP_EOL) !== FALSE) {
 				$request->title = substr($request->description, 0, strpos($request->description, PHP_EOL));
@@ -63,17 +62,41 @@ function request_single($requests) {
 		}
 
 
-		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
-		echo '<div class="open311-id"> Request #' . $request->service_request_id . '</div>';
-		echo '<div class="open311-status state-' . $request->status . '">' . $request->status . '</div>';
-		
-		echo '<div class="open311-requested-datetime">' .  $request->requested_datetime . '</div>';
+		if ($request->status == 'new') {
+			
+		}
 
-		echo '<div class="open311-status">';
-		echo '<span>' . $request->status_notes . '</span>';
-		echo '</div>';		
-		echo '<div class="open311-title">Title: ' . $request->title . ' </div>';
-		echo '<div class="open311-description">Description: ' . $request->description . ' </div>';
+		switch ($request->status) {
+		    case 'new':
+		        $status_icon = 'fa-arrow-circle-o-right';
+		        break;
+		    case 'open':
+		        $status_icon = 'fa-exclamation-circle';
+		        break;
+		    case 'closed':
+		        $status_icon = 'fa-check-circle-o';
+		        break;
+		}
+
+
+		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
+
+		echo '<h1 class="open311-title">' . $request->title . '</h1>';
+
+		echo '<h4 class="open311-id"> Request #' . $request->service_request_id . '</h4>';
+		echo '<div class="open311-status state-' . $request->status . '"><i class="fa ' . $status_icon . '"></i> ' . $request->status . '</div>';
+		
+		echo '<div class="open311-requested-datetime">Submitted on ' .  date('l F j, Y \a\t g:i a', strtotime($request->requested_datetime)) . '</div>';
+
+		echo '<div class="open311-description">' . $request->description . ' </div>';
+
+		if (!empty($request->status_notes)) {
+			echo '<div class="open311-status-notes">';	
+			echo '<div class="status-note-heading">Response</div>';	
+			echo '<div class="status-note">' . $request->status_notes . '</div>';	
+			echo '</div>';	
+		}
+		
 		echo '</div>';
 	} 
 
