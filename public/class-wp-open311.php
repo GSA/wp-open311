@@ -393,6 +393,12 @@ class wp_open311 {
 				$filtered_fields 			= $this->un_namespace_fields($filtered_fields);
 				$standard_fields_filtered	= $this->un_namespace_fields($standard_fields_filtered);
 
+				// This is to provide a pseudo summary field as the first line of the description
+				// Inspired by https://github.com/blog/926-shiny-new-commit-styles
+				if(!empty($filtered_fields['name'])) {
+					$standard_fields_filtered['description'] = $filtered_fields['name'] . "\n\n" . $standard_fields_filtered['description'];
+				}
+
 				$api_response = $open311_api->post_request($service_code, $standard_fields_filtered, $filtered_fields);
 
 				// if api response was good:
