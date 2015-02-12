@@ -24,7 +24,7 @@ function response_output($response) {
         if(!empty($response['message']) && is_array($response['message'])) {
 
             foreach ($response['message'] as $message) {
-                echo ' <span>The status of the response can be tracked under request ' .  '<a href="./request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
+                echo ' <span>The status of the response can be tracked under request ' .  '<a href="' . get_permalink() . 'request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
             }
 
         }        
