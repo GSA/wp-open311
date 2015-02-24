@@ -41,7 +41,7 @@ function request_list($requests) {
 		}
 
 		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
-		echo '<h3 class="open311-title"><a href="./request-id/' . $request->service_request_id . '">' . $request->title . '</a></h3>';
+		echo '<h3 class="open311-title"><a href="./request-id/' . $request->service_request_id . '">' . htmlentities($request->title) . '</a></h3>';
 		echo '<div class="open311-status state-' . $request->status . '">' . $request->status . '</div>';
 		
 		echo '<div class="open311-requested-datetime"><a href="./request-id/' . $request->service_request_id . '">Submitted on ' .  date('l F j, Y \a\t g:i a', strtotime($request->requested_datetime)) . '</a></div>';
@@ -99,20 +99,20 @@ function request_single($requests) {
 
 		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
 
-		echo '<h1 class="open311-title">' . $request->title . '</h1>';
+		echo '<h1 class="open311-title">' . htmlentities($request->title) . '</h1>';
 
 		echo '<h4 class="open311-id"> Request #' . $request->service_request_id . '</h4>';
 		echo '<div class="open311-status state-' . $request->status . '"><i class="fa ' . $status_icon . '"></i> ' . $request->status . '</div>';
 		
 		echo '<div class="open311-requested-datetime">Submitted on ' .  date('l F j, Y \a\t g:i a', strtotime($request->requested_datetime)) . '</div>';
 
-		echo '<div class="open311-description">' . $request->description . ' </div>';
+		echo '<div class="open311-description">' . htmlentities($request->description) . ' </div>';
 
 		if (!empty($request->service_notice)) {
 			echo '<hr>';
 			echo '<div class="open311-status-notes">';	
 			echo '<h4 class="status-note-heading">Response</h4>';	
-			echo '<div class="status-note">' . $request->service_notice . '</div>';	
+			echo '<div class="status-note">' . htmlentities($request->service_notice) . '</div>';	
 			echo '</div>';	
 		}
 		
