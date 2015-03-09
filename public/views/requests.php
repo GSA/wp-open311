@@ -68,6 +68,7 @@ function request_single($requests) {
 			if(strpos(substr($request->description, 0, 51), PHP_EOL) !== FALSE) {
 				$request->title = substr($request->description, 0, strpos($request->description, PHP_EOL));
 				$request->description = substr($request->description, strpos($request->description, PHP_EOL));
+				$request->description = 'poop';
 			} else {
 				$request->title = substr($request->description, 0, 50);
 
@@ -99,20 +100,29 @@ function request_single($requests) {
 
 		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
 
-		echo '<h1 class="open311-title">' . htmlentities($request->title) . '</h1>';
+		echo '<h1 class="open311-title">' . esc_html($request->title) . '</h1>';
 
 		echo '<h4 class="open311-id"> Request #' . $request->service_request_id . '</h4>';
 		echo '<div class="open311-status state-' . $request->status . '"><i class="fa ' . $status_icon . '"></i> ' . $request->status . '</div>';
 		
 		echo '<div class="open311-requested-datetime">Submitted on ' .  date('l F j, Y \a\t g:i a', strtotime($request->requested_datetime)) . '</div>';
 
-		echo '<div class="open311-description">' . htmlentities($request->description) . ' </div>';
+		echo '<div class="open311-description">';
 
-		if (!empty($request->service_notice)) {
+		if(!empty($request->description)) {
+			echo wpautop(esc_html($request->description));
+		} else {
+			echo '<em>No additional description was provided</em>';
+		}
+		
+
+		echo ' </div>';
+
+		if (!empty($request->status_notes)) {
 			echo '<hr>';
 			echo '<div class="open311-status-notes">';	
 			echo '<h4 class="status-note-heading">Response</h4>';	
-			echo '<div class="status-note">' . htmlentities($request->service_notice) . '</div>';	
+			echo '<div class="status-note">' . wpautop(esc_html($request->status_notes)) . '</div>';	
 			echo '</div>';	
 		}
 		
