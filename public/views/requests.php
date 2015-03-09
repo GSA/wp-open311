@@ -68,7 +68,6 @@ function request_single($requests) {
 			if(strpos(substr($request->description, 0, 51), PHP_EOL) !== FALSE) {
 				$request->title = substr($request->description, 0, strpos($request->description, PHP_EOL));
 				$request->description = substr($request->description, strpos($request->description, PHP_EOL));
-				$request->description = 'poop';
 			} else {
 				$request->title = substr($request->description, 0, 50);
 
