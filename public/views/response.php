@@ -23,8 +23,13 @@ function response_output($response) {
         
         if(!empty($response['message']) && is_array($response['message'])) {
 
+            $permalink = get_permalink();
+            if (substr($permalink, -1) != '/') {
+                $permalink = $permalink . '/';
+            }
+
             foreach ($response['message'] as $message) {
-                echo ' <span>The status of the response can be tracked under request ' .  '<a href="' . get_permalink() . 'request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
+                echo ' <span>The status of the response can be tracked under request ' .  '<a href="' . $permalink . 'request-id/' . $message->service_request_id  . '">#' . $message->service_request_id . '</a></span>';
             }
 
         }        

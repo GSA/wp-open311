@@ -13,7 +13,12 @@ class open311_api {
 	public function get_requests($filter = null, $page_size = null, $page = null) {
 
 		if (empty($filter['request_id'])) {
-			$url = $this->options['api_uri'] . 'requests.json'; // '?page_size=' . $page_size;	
+			$url = $this->options['api_uri'] . 'requests.json'; // '?page_size=' . $page_size;
+
+			if (!empty($filter['service_code'])) {
+				$url = $url . '?service_code=' . $filter['service_code'];
+			}
+
 		} else {
 			$url = $this->options['api_uri'] . 'requests/' . $filter['request_id'] . '.json'; 
 		}

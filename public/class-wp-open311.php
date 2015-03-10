@@ -121,9 +121,9 @@ class wp_open311 {
 		//	'page' => 1,
 		//), $atts));
 
-		$filter = (!empty($atts['filter'])) ? $atts['filter'] : '';
 
-		return $this->requests_search($filter);
+
+		return $this->requests_search($atts);
 	}
 
 
