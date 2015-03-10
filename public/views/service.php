@@ -59,9 +59,21 @@ function service_output($standard_fields, $service) {
 
 	function generate_html_field($attribute) {
 
+		$visibility = attribute_visibility($attribute->code);
+
+		if ($visibility == 'private') {
+			$visibility_icon = 'lock';
+			$visibility_tooltip = 'This information is private and will only be used to respond to you';
+		}
+
+		if ($visibility == 'public') {
+			$visibility_icon = 'globe';
+			$visibility_tooltip = 'Information provided here will be visible to the public';
+		}		
+
 		$required 	= (strtolower($attribute->required) == 'true') ? 'Required' : 'Optional';
 		$required_label = '<span class="open311-requirement-label">(' . $required . ')</span>' . "\n";
-		$label 		= '<label for="' . $attribute->code . '">' . $attribute->description . ' ' . $required_label . '</label>' . "\n";
+		$label 		= '<label title="' . $visibility_tooltip . '" for="' . $attribute->code . '"><i class="fa fa-' . $visibility_icon . '"></i> ' . $attribute->description . ' ' . $required_label . '</label>' . "\n";
 
 		if($attribute->datatype == 'string') {
 			$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" placeholder="' . $attribute->datatype_description . '">' . "\n";	
@@ -90,6 +102,27 @@ function service_output($standard_fields, $service) {
 		
 
 		return $field;
+	}
+
+	function attribute_visibility($attribute) {
+		
+		$private = array(
+			'email',
+			'device_id',
+			'account_id',
+			'first_name',
+			'last_name',
+			'phone');
+
+		$attribute = substr($attribute, strlen('wp_open311_'));
+
+		if (array_search($attribute, $private) !== false) {
+			return 'private';
+		} else {
+			return 'public';
+		}
+
+
 	}
 
 
