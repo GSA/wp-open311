@@ -121,8 +121,6 @@ class wp_open311 {
 		//	'page' => 1,
 		//), $atts));
 
-
-
 		return $this->requests_search($atts);
 	}
 
@@ -165,9 +163,11 @@ class wp_open311 {
 		$open311_api = $this->get_api();
 		global $wp_query;
 
-		if (empty($filter) && !empty($wp_query->query)) {
-			$filter = $wp_query->query;
-		}
+		$dynamic_filter = $wp_query->query;
+
+		if(!empty($dynamic_filter['request_id'])) {
+			$filter = $dynamic_filter;
+		} 
 
 		$requests = $open311_api->get_requests($filter);
 		return $this->display_requests_search($requests);
