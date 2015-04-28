@@ -41,7 +41,7 @@ function request_list($requests) {
 		}
 
 		echo '<div class="open311-request" id="request-' .  $request->service_request_id . '">';
-		echo '<h3 class="open311-title"><a href="./request-id/' . $request->service_request_id . '">' . htmlentities($request->title) . '</a></h3>';
+		echo '<h3 class="open311-title"><a href="./request-id/' . $request->service_request_id . '">' . esc_html($request->title) . '</a></h3>';
 		echo '<div class="open311-status state-' . $request->status . '">' . $request->status . '</div>';
 		
 		echo '<div class="open311-requested-datetime"><a href="./request-id/' . $request->service_request_id . '">Submitted on ' .  date('l F j, Y \a\t g:i a', strtotime($request->requested_datetime)) . '</a></div>';
