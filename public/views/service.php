@@ -59,6 +59,26 @@ function service_output($standard_fields, $service) {
 
 	function generate_html_field($attribute) {
 
+		// Set default value
+
+		$namespace = 'wp_open311_';
+		if (substr($attribute->code, 0, strlen($namespace)) == $namespace) {
+			$raw_field = substr($attribute->code, strlen($namespace));
+		} else {
+			$raw_field = null;
+		}
+
+		if ($raw_field == 'name') $raw_field = null;
+
+		if($attribute->datatype == 'string' || $attribute->datatype == 'text' ) {
+			if ($passed_value = get_query_var( $raw_field, false )) {
+				$placeholder = ' value="' . $passed_value . '" disabled '; 
+			} else {
+				$placeholder = ' placeholder="' . $attribute->datatype_description . '" ';
+			}			
+		}
+
+
 		$visibility = attribute_visibility($attribute->code);
 
 		if ($visibility == 'private') {
@@ -76,18 +96,29 @@ function service_output($standard_fields, $service) {
 		$label 		= '<label title="' . $visibility_tooltip . '" for="' . $attribute->code . '"><i class="fa fa-' . $visibility_icon . '"></i> ' . $attribute->description . ' ' . $required_label . '</label>' . "\n";
 
 		if($attribute->datatype == 'string') {
-			$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" placeholder="' . $attribute->datatype_description . '">' . "\n";	
+			$field_type = '<input class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '" type="text" ' . $placeholder . '>' . "\n";	
 		} else if ($attribute->datatype == 'text') {
 			$field_type = '<textarea class="form-control" name="' . $attribute->code . '" id="' . $attribute->code . '"></textarea>' . "\n";	
 		} else if ($attribute->datatype == 'singlevaluelist') {
-			$field_type = '<select class="form-control chosen-select" name="' . $attribute->code . '" id="' . $attribute->code . '" data-placeholder="Select ' . $attribute->description . '">' . "\n";
+
+			if ($passed_value = get_query_var( $raw_field, false )) {
+				$disabled = ' disabled ';
+			} else {
+				$passed_value = '';
+				$disabled = '';
+			}
+
+			$field_type = '<select class="form-control chosen-select" name="' . $attribute->code . '" id="' . $attribute->code . '" data-placeholder="Select ' . $attribute->description . '"' . $disabled . '>' . "\n";
 		
 			$options = $attribute->values;
 
-			$field_type .= '<option value="" disabled selected></option>' . "\n";
+			$field_type .= '<option value="" disabled ';
+			$field_type .= (empty($disabled)) ? 'selected' : '';
+			$field_type .= ' ></option>' . "\n";
 
 			foreach ($options as $option) {
-				$field_type .= '<option value="' . $option->key . '">' . $option->name . '</option>' . "\n";
+				$selected = ($passed_value == $option->key) ? ' selected ' : '';
+				$field_type .= '<option value="' . $option->key . '"' . $selected . '>' . $option->name . '</option>' . "\n";
 			}
 
 			$field_type .= '</select>' . "\n";

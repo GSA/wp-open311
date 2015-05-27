@@ -109,7 +109,6 @@ class wp_open311 {
 		// hook add_rewrite_rules function into rewrite_rules_array
 		add_filter('rewrite_rules_array', array($this, 'open311_rewrite_rules') );
 
-
 	}
 
 
@@ -446,7 +445,13 @@ class wp_open311 {
 
 
 	public function open311_queryvars($qvars) {
+		
 		$qvars[] = 'request_id';
+		$qvars[] = 'media_url';
+
+		// Non-open311 variables
+		$qvars[] = 'agency_name';		
+
 		return $qvars;
 	}
 
