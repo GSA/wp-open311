@@ -19,6 +19,11 @@ class open311_api {
 				$url = $url . '?service_code=' . $filter['service_code'];
 			}
 
+			if (!empty($filter['agency_responsible'])) {
+				$separator = (strpos($url, '?') !== false) ? '&' : '?';
+				$url = $url . $separator . 'agency_responsible=' . $filter['agency_responsible'];
+			}			
+
 		} else {
 			$url = $this->options['api_uri'] . 'requests/' . $filter['request_id'] . '.json'; 
 		}

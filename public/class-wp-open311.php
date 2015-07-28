@@ -159,13 +159,15 @@ class wp_open311 {
 
 	public function requests_search($filter = '') {
 
+		$filter = (empty($filter)) ? array() : $filter;
+
 		$open311_api = $this->get_api();
 		global $wp_query;
 
 		$dynamic_filter = $wp_query->query;
 
-		if(!empty($dynamic_filter['request_id'])) {
-			$filter = $dynamic_filter;
+		if(!empty($dynamic_filter['request_id']) OR !empty($dynamic_filter['agency_responsible'])) {			
+			$filter = array_merge($filter, $dynamic_filter);
 		} 
 
 		$requests = $open311_api->get_requests($filter);
@@ -448,9 +450,10 @@ class wp_open311 {
 		
 		$qvars[] = 'request_id';
 		$qvars[] = 'media_url';
+		$qvars[] = 'agency_responsible';	
 
 		// Non-open311 variables
-		$qvars[] = 'agency_name';		
+		$qvars[] = 'agency_name';			
 
 		return $qvars;
 	}
