@@ -73,6 +73,7 @@ function service_output($standard_fields, $service) {
 
 		if($attribute->datatype == 'string' || $attribute->datatype == 'text' ) {
 			if ($passed_value = get_query_var( $raw_field, false )) {
+                $passed_value = esc_html($passed_value);
 				$placeholder = ' value="' . $passed_value . '" disabled '; 
 				$hidden_field = true;
 			} else {
@@ -117,6 +118,7 @@ function service_output($standard_fields, $service) {
 			$field_type = '';
 
 			if ($passed_value = get_query_var( $raw_field, false )) {
+                $passed_value = esc_html($passed_value);
 				$disabled = ' disabled ';
 				$field_type .= '<input type="hidden" name="' . $field_name . '" value="' . $passed_value . '">';
 				$field_name .= '_disabled';				
@@ -144,7 +146,7 @@ function service_output($standard_fields, $service) {
 		}
 		
 
-		$field .= '<div class="form-group ' . strtolower($required) . '">' . "\n";
+		$field = '<div class="form-group ' . strtolower($required) . '">' . "\n";
 		$field .= $label;
 		$field .= $field_type;
 		$field .= '</div>' . "\n";
